@@ -9,7 +9,7 @@ Created on Jul 14, 2016
 from ProxyPool import VampirEMProxyPool
 
 def main():
-    #创建代理池对象
+    
     heads = {
              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
              'Accept-Encoding': 'gzip, deflate, sdch',
@@ -19,7 +19,7 @@ def main():
              }
     
     url = "http://www.xicidaili.com/nn/"
-    
+    #create the instance of VampirEMProxyPool
     m_proxy_pool = VampirEMProxyPool(url, heads)
     #parse the xicidaili.com   
     m_proxy_pool.parse_xici_com()
