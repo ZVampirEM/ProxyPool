@@ -32,7 +32,7 @@ class VampirEMProxyPool(object):
         visit_page_url = self.__m_target_url + str(page_number)
         
         m_session = requests.session()
-        while (is_last_two_days_flag):
+        while is_last_two_days_flag:
             req = m_session.get(visit_page_url, headers = self.__m_heads)
             # use beautifulsoup to parse html
             bs = BeautifulSoup(req.text, 'lxml')
