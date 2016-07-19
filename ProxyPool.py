@@ -53,13 +53,36 @@ class VampirEMProxyPool(object):
                 
                 else:
                     is_last_two_days_flag = False
+                    print 'get the last page %d' % (page_number)
                     break
                 
             if is_last_two_days_flag:
+                print 'get page %d' % (page_number)
                 page_number += 1
                 visit_page_url = self.__m_target_url + str(page_number)
-                print 'get page %d' % (page_number)
         
         print len(self.__m_proxy_pool)
         return
-        
+
+    #Verify the proxy is available or not, and save the available proxy in a txt file
+    def abstract_proxy_available(self):
+        fail_num = 0
+        success_num = 0
+        m_session = requests.session()
+        verify_url = "http://icanhazip.com/"
+        for item in self.__m_proxy_pool:
+            proxies = dict(http = "http://" + item)
+            try:
+                m_session.get(verify_url, headers = self.__m_heads, proxies = proxies)
+            except:
+                print "proxy %s is not available" % (item)
+                self.__m_proxy_pool.pop(self.__m_proxy_pool.index(item))
+                fail_num += 1
+                continue
+
+            else:
+                
+
+
+
+

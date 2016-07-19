@@ -21,8 +21,11 @@ def main():
     url = "http://www.xicidaili.com/nn/"
     #create the instance of VampirEMProxyPool
     m_proxy_pool = VampirEMProxyPool(url, heads)
-    #parse the xicidaili.com   
+    #parse the xicidaili.com
     m_proxy_pool.parse_xici_com()
+    #verify the proxy available or not
+    m_proxy_pool.abstract_proxy_available()
+
 
 if __name__ == '__main__':
     main()
