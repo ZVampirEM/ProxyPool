@@ -8,6 +8,7 @@ Created on Jul 14, 2016
 import requests
 import re
 import time
+import os
 from bs4 import BeautifulSoup
 
 class VampirEMProxyPool(object):
@@ -18,6 +19,10 @@ class VampirEMProxyPool(object):
     def __init__(self, url, heads):
         self.__m_target_url = url
         self.__m_heads = heads
+
+    def __del__(self):
+        pass
+
         
     #Parse the url xicidaili.com
     def parse_xici_com(self):
@@ -64,25 +69,49 @@ class VampirEMProxyPool(object):
         print len(self.__m_proxy_pool)
         return
 
+    def save_proxy(self):
+        if os.path.isfile("ProxyPool.txt"):
+            os.remove("ProxyPool.txt")
+        for item in self.__m_proxy_pool:
+            need_to_save_proxy = "http://" + item + os.linesep
+            fp = open("ProxyPool.txt", "a")
+            fp.write(need_to_save_proxy)
+            fp.close()
+
+'''
     #Verify the proxy is available or not, and save the available proxy in a txt file
     def abstract_proxy_available(self):
         fail_num = 0
         success_num = 0
-        m_session = requests.session()
+        if os.path.isfile("ProxyPool.txt"):
+            os.remove("ProxyPool.txt")
+#       m_session = requests.session()
         verify_url = "http://icanhazip.com/"
         for item in self.__m_proxy_pool:
             proxies = dict(http = "http://" + item)
             try:
-                m_session.get(verify_url, headers = self.__m_heads, proxies = proxies)
+                req = requests.get(verify_url, headers = self.__m_heads, proxies = proxies)
             except:
+                print req.status_code
                 print "proxy %s is not available" % (item)
                 self.__m_proxy_pool.pop(self.__m_proxy_pool.index(item))
                 fail_num += 1
+                print "now fail_num = %d" % (fail_num)
                 continue
 
             else:
-                
+                print req.status_code
+                available_proxy = proxies['http'] + os.linesep
 
+                fp = open("ProxyPool.txt", "a")
+                fp.write(available_proxy)
+                fp.close()
+                success_num += 1
+                print "now success_num = %d" % (success_num)
+
+        print "success_num = %d, fail_num = %d" % (success_num, fail_num)
+
+'''
 
 
 

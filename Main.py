@@ -23,8 +23,9 @@ def main():
     m_proxy_pool = VampirEMProxyPool(url, heads)
     #parse the xicidaili.com
     m_proxy_pool.parse_xici_com()
-    #verify the proxy available or not
-    m_proxy_pool.abstract_proxy_available()
+    #Verify the proxy is available or not, and save the available proxy in a txt file
+ #   m_proxy_pool.abstract_proxy_available()
+    m_proxy_pool.save_proxy()
 
 
 if __name__ == '__main__':
