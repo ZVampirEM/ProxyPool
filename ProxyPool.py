@@ -89,8 +89,10 @@ class VampirEMProxyPool(object):
         verify_url = "http://icanhazip.com/"
         for item in self.__m_proxy_pool:
             proxies = dict(http = "http://" + item)
-            try:
-                req = requests.get(verify_url, headers = self.__m_heads, proxies = proxies)
+
+            req = requests.get(verify_url, headers = self.__m_heads, proxies = proxies)
+
+
             except:
                 print req.status_code
                 print "proxy %s is not available" % (item)
