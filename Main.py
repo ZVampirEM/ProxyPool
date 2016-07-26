@@ -7,12 +7,12 @@ Created on Jul 14, 2016
 '''
 
 import time
-from ProxyPool import VampirEMProxyPool
+import ProxyPool# import VampirEMProxyPool
 
 
 def handle_proxy_pool(get_proxy_url, need_headers):
     # create the instance of VampirEMProxyPool
-    m_proxy_pool = VampirEMProxyPool(get_proxy_url, need_headers)
+    m_proxy_pool = ProxyPool.VampirEMProxyPool(get_proxy_url, need_headers)
     # parse the xicidaili.com
     m_proxy_pool.parse_xici_com()
     # Verify the proxy is available or not, and save the available proxy in a txt file
@@ -32,22 +32,25 @@ def main():
 
     url = "http://www.xicidaili.com/nn/"
 
+    is_first_get = True
+
+    #Get Proxy Time Point
+    get_proxy_time_stamp = {2359: 235953, 359: 35959, 759: 75959, 1159: 115959, 1559: 155959, 1959: 195959}
+
+    #Get Proxy any time when program start
     handle_proxy_pool(url, headers)
-
-
-
-    get_proxy_time_stamp = [235959, 35959, 75959, 115959, 155959, 195959, 81659]
 
     while 1:
         current_time = int(time.strftime("%H%M%S", time.localtime(time.time())))
+        find_key = int(time.strftime("%H%M", time.localtime(time.time())))
 
-        for time_item in get_proxy_time_stamp:
-            if (current_time - time_item) in range(-59, 60):
+        if find_key in get_proxy_time_stamp:
+            print "it's time"
+            if (current_time - get_proxy_time_stamp[find_key]) in range(-5, 6):
                 handle_proxy_pool(url, headers)
 
-#        else:
-#            print current_time
-#            print "It is not time to get the proxy!!! You can use the proxy in ProxyPool.txt!"
+        time.sleep(10)
+
 
 
 if __name__ == '__main__':

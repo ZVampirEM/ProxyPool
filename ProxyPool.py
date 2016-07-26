@@ -12,16 +12,13 @@ import os
 from bs4 import BeautifulSoup
 
 class VampirEMProxyPool(object):
-    __m_target_url = ""
-    __m_heads      = {}
-    __m_proxy_pool = []
-    
     def __init__(self, url, heads):
         self.__m_target_url = url
         self.__m_heads = heads
+        self.__m_proxy_pool = []
 
     def __del__(self):
-        pass
+        self.__m_proxy_pool = []
 
         
     #Parse the url xicidaili.com
@@ -77,6 +74,9 @@ class VampirEMProxyPool(object):
             fp = open("ProxyPool.txt", "a")
             fp.write(need_to_save_proxy)
             fp.close()
+
+        print "Save Proxy Pool Success!"
+        self.__m_proxy_pool = []
 
 '''
     #Verify the proxy is available or not, and save the available proxy in a txt file
