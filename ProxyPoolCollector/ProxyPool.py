@@ -11,7 +11,7 @@ import time
 import os
 from bs4 import BeautifulSoup
 
-class VampirEMProxyPool(object):
+class ProxyPool(object):
     def __init__(self, url, heads):
         self.__m_target_url = url
         self.__m_heads = heads

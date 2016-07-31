@@ -7,12 +7,13 @@ Created on Jul 14, 2016
 '''
 
 import time
-import ProxyPool# import VampirEMProxyPool
+from conf import ProxyPoolConfig
+from ProxyPoolCollector import ProxyPool
 
 
 def handle_proxy_pool(get_proxy_url, need_headers):
     # create the instance of VampirEMProxyPool
-    m_proxy_pool = ProxyPool.VampirEMProxyPool(get_proxy_url, need_headers)
+    m_proxy_pool = ProxyPool.ProxyPool(get_proxy_url, need_headers)
     # parse the xicidaili.com
     m_proxy_pool.parse_xici_com()
     # Verify the proxy is available or not, and save the available proxy in a txt file
@@ -21,33 +22,30 @@ def handle_proxy_pool(get_proxy_url, need_headers):
 
 
 def main():
-    
-    headers = {
-             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-             'Accept-Encoding': 'gzip, deflate, sdch',
-             'Accept-Language': 'zh-CN,zh;q=0.8',
-             'Connection': 'keep-alive',
-             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
-             }
+    #get headers, url, time_stamp from the module of conf
+    config_instance = ProxyPoolConfig.ConfigOperating()
+    config_instance.parse_conf_json()
+    request_headers = config_instance.get_headers()
+    request_url = config_instance.get_url()
+    get_proxy_time_stamp = config_instance.get_time_stamp()
 
-    url = "http://www.xicidaili.com/nn/"
+    print request_headers
+    print request_url
+    print get_proxy_time_stamp
 
-    is_first_get = True
-
-    #Get Proxy Time Point
-    get_proxy_time_stamp = {2359: 235953, 359: 35959, 759: 75959, 1159: 115959, 1559: 155959, 1959: 195959}
 
     #Get Proxy any time when program start
-    handle_proxy_pool(url, headers)
+    handle_proxy_pool(request_url, request_headers)
 
     while 1:
         current_time = int(time.strftime("%H%M%S", time.localtime(time.time())))
-        find_key = int(time.strftime("%H%M", time.localtime(time.time())))
+        find_key = time.strftime("%H%M", time.localtime(time.time()))
 
         if find_key in get_proxy_time_stamp:
-            print "it's time"
-            if (current_time - get_proxy_time_stamp[find_key]) in range(-5, 6):
-                handle_proxy_pool(url, headers)
+            print int(get_proxy_time_stamp[find_key])
+            print type(int(get_proxy_time_stamp[find_key]))
+            if (current_time - int(get_proxy_time_stamp[find_key])) in range(-5, 6):
+                handle_proxy_pool(request_url, request_headers)
 
         time.sleep(10)
 
