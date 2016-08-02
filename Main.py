@@ -23,7 +23,12 @@ def main():
                                                 request_headers, get_proxy_time_stamp)
     proxy_pool_collector_thread.collect_proxy_pool()
 
+    while True:
+        terminal_input = raw_input()
 
+        if terminal_input == "exit":
+            proxy_pool_collector_thread.join()
+            break
 
 
 

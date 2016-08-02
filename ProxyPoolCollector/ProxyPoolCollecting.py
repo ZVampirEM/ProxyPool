@@ -18,9 +18,16 @@ class ProxyPoolCollect(object):
         self.__m_heads = request_headers
         self.__m_proxy_pool = []
         self.__m_get_proxy_time_stamp = time_stamp
+        self.__is_to_exit = False
 
     def __del__(self):
         self.__m_proxy_pool = []
+
+    def get_is_to_exit_flag(self):
+        return self.__is_to_exit
+
+    def set_is_to_exit_flag(self, value):
+        self.__is_to_exit = value
 
 
     #Parse the url xicidaili.com
@@ -98,6 +105,9 @@ class ProxyPoolCollect(object):
                 if (current_time - int(self.__m_get_proxy_time_stamp[find_key])) in range(-5, 6):
                     self.parse_xici_com()
                     self.save_proxy()
+
+            if self.__is_to_exit:
+                break;
 
             time.sleep(10)
 
