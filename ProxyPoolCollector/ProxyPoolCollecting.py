@@ -7,20 +7,22 @@ Created on Jul 14, 2016
 '''
 import requests
 import re
-import time
 import os
+import time
 from bs4 import BeautifulSoup
+import datetime
 
-class ProxyPool(object):
-    def __init__(self, url, heads):
-        self.__m_target_url = url
-        self.__m_heads = heads
+class ProxyPoolCollect(object):
+    def __init__(self, request_url, request_headers, time_stamp):
+        self.__m_target_url = request_url
+        self.__m_heads = request_headers
         self.__m_proxy_pool = []
+        self.__m_get_proxy_time_stamp = time_stamp
 
     def __del__(self):
         self.__m_proxy_pool = []
 
-        
+
     #Parse the url xicidaili.com
     def parse_xici_com(self):
         # the regular expression which is used to abstract the ip of proxy
@@ -28,7 +30,13 @@ class ProxyPool(object):
         # the regular expression which is used to abstract the verification time of proxy
         proxy_verf_time_pattern2 = re.compile(r'\d+\-\d+\-\d+')
         # get the local time
-        local_time = int(time.strftime('%Y%m%d', time.localtime(time.time())))
+#        local_time = int(time.strftime('%Y%m%d', time.localtime(time.time())))
+        tmp_today_date = datetime.date.today()
+        tmp_yesterday_date = tmp_today_date - datetime.timedelta(days=1)
+
+        today_date = int(''.join(str(tmp_today_date).split('-')))
+        yesterday_date = int(''.join(str(tmp_yesterday_date).split('-')))
+
         is_last_two_days_flag = True
         page_number = 1
         visit_page_url = self.__m_target_url + str(page_number)
@@ -45,7 +53,7 @@ class ProxyPool(object):
                 # handle the verification time for campare with local time
                 handled_veri_time = int('20' + ''.join(orig_verf_time.split(' ')[0].split('-')))
                 # just abstract the proxy ip which is verified in the last two days
-                if (handled_veri_time == local_time) or (handled_veri_time == local_time - 1): 
+                if (handled_veri_time == today_date) or (handled_veri_time == yesterday_date):
                     # abstract the ip and port of proxy from html
                     proxy_ip = item.find(text = proxy_ip_re_pattern)
                     proxy_port = item.find_all('td')[2].string
@@ -77,6 +85,21 @@ class ProxyPool(object):
 
         print "Save Proxy Pool Success!"
         self.__m_proxy_pool = []
+
+    def get_proxy_pool(self):
+        self.parse_xici_com()
+        self.save_proxy()
+
+        while 1:
+            current_time = int(time.strftime("%H%M%S", time.localtime(time.time())))
+            find_key = str(int(time.strftime("%H%M", time.localtime(time.time()))))
+
+            if find_key in self.__m_get_proxy_time_stamp:
+                if (current_time - int(self.__m_get_proxy_time_stamp[find_key])) in range(-5, 6):
+                    self.parse_xici_com()
+                    self.save_proxy()
+
+            time.sleep(10)
 
 '''
     #Verify the proxy is available or not, and save the available proxy in a txt file
