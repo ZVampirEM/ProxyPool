@@ -6,7 +6,7 @@ Created on Jul 14, 2016
 @author: enming.zhang
 '''
 
-import time
+
 from conf import ProxyPoolConfig
 from ProxyPoolCollector import ProxyPoolCollectorThread
 
@@ -22,6 +22,12 @@ def main():
     proxy_pool_collector_thread = ProxyPoolCollectorThread.ProxyPoolCollector(request_url,
                                                 request_headers, get_proxy_time_stamp)
     proxy_pool_collector_thread.collect_proxy_pool()
+
+    if proxy_pool_collector_thread.is_ready:
+        #has variable proxy, start listener thread, whether or not
+        pass
+
+
 
     while True:
         terminal_input = raw_input()
