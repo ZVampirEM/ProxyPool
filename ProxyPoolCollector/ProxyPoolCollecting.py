@@ -19,7 +19,6 @@ class ProxyPoolCollect(object):
         self.__m_proxy_pool = []
         self.__m_get_proxy_time_stamp = time_stamp
         self.__is_to_exit = False
-        self.has_variable_proxy = False
 
     def __del__(self):
         self.__m_proxy_pool = []
@@ -97,8 +96,6 @@ class ProxyPoolCollect(object):
     def get_proxy_pool(self):
         self.parse_xici_com()
         self.save_proxy()
-
-        self.has_variable_proxy = True
 
         while 1:
             current_time = int(time.strftime("%H%M%S", time.localtime(time.time())))

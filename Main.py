@@ -21,19 +21,13 @@ def main():
     #proxy pool collector thread
     proxy_pool_collector_thread = ProxyPoolCollectorThread.ProxyPoolCollector(request_url,
                                                 request_headers, get_proxy_time_stamp)
-    proxy_pool_collector_thread.collect_proxy_pool()
-
-    if proxy_pool_collector_thread.is_ready:
-        #has variable proxy, start listener thread, whether or not
-        pass
-
-
+    proxy_pool_collector_thread.launch()
 
     while True:
         terminal_input = raw_input()
 
         if terminal_input == "exit":
-            proxy_pool_collector_thread.join()
+            proxy_pool_collector_thread.Stop()
             break
 
 

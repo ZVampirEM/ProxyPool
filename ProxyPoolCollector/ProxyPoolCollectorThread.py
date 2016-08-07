@@ -1,24 +1,24 @@
-import threading
+from ThreadBase import ThreadBaseModule
 import ProxyPoolCollecting
 
-class ProxyPoolCollector(object):
+class ProxyPoolCollector(ThreadBaseModule.OriginalThread):
     def __init__(self, url, headers, time_stamp):
-        self.is_ready = False
+        ThreadBaseModule.OriginalThread.__init__(self)
+        self.is_ready = []
         self.proxy_pool_collect_instance = ProxyPoolCollecting.ProxyPoolCollect(url, headers, time_stamp)
-        self.collect_thread = threading.Thread(target=self.proxy_pool_collect_instance.get_proxy_pool)
 
-    def __del__(self):
+    def Initialize(self):
+        return True
+
+    def Run(self):
+        self.proxy_pool_collect_instance.get_proxy_pool()
+
+    def ExitInstance(self):
+        self.is_ready = []
         del self.proxy_pool_collect_instance
 
-    def collect_proxy_pool(self):
-        self.collect_thread.start()
-        while self.proxy_pool_collect_instance.has_variable_proxy == False:
-            pass
-        self.is_ready = True
-
-
-    def join(self):
+    def Stop(self):
         self.proxy_pool_collect_instance.set_is_to_exit_flag(True)
-        self.collect_thread.join()
+        self.thread_instance.join()
 
 
