@@ -1,11 +1,10 @@
 from ThreadBase import ThreadBaseModule
-import ProxyPoolCollecting
+import ProxyCollector
 
-class ProxyPoolCollector(ThreadBaseModule.OriginalThread):
+class ProxyCollectorThread(ThreadBaseModule.OriginalThread):
     def __init__(self, url, headers, time_stamp):
         ThreadBaseModule.OriginalThread.__init__(self)
-        self.is_ready = []
-        self.proxy_pool_collect_instance = ProxyPoolCollecting.ProxyPoolCollect(url, headers, time_stamp)
+        self.proxy_pool_collect_instance = ProxyCollector.Collector(url, headers, time_stamp)
 
     def Initialize(self):
         return True
@@ -14,7 +13,6 @@ class ProxyPoolCollector(ThreadBaseModule.OriginalThread):
         self.proxy_pool_collect_instance.get_proxy_pool()
 
     def ExitInstance(self):
-        self.is_ready = []
         del self.proxy_pool_collect_instance
 
     def Stop(self):

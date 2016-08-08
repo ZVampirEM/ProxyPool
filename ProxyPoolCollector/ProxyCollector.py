@@ -12,7 +12,7 @@ import time
 from bs4 import BeautifulSoup
 import datetime
 
-class ProxyPoolCollect(object):
+class Collector(object):
     def __init__(self, request_url, request_headers, time_stamp):
         self.__m_target_url = request_url
         self.__m_heads = request_headers

@@ -17,10 +17,12 @@ def main():
     request_headers = config_instance.get_headers()
     request_url = config_instance.get_url()
     get_proxy_time_stamp = config_instance.get_time_stamp()
+    listen_addr = config_instance.get_listen_addr()
+    listen_port = config_instance.get_listen_port()
 
     #proxy pool collector thread
-    proxy_pool_collector_thread = ProxyPoolCollectorThread.ProxyPoolCollector(request_url,
-                                                request_headers, get_proxy_time_stamp)
+    proxy_pool_collector_thread = ProxyPoolCollectorThread.ProxyCollectorThread(request_url,
+                                                    request_headers, get_proxy_time_stamp)
     proxy_pool_collector_thread.launch()
 
     while True:
