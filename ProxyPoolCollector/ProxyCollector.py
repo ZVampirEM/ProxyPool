@@ -13,12 +13,13 @@ from bs4 import BeautifulSoup
 import datetime
 
 class Collector(object):
-    def __init__(self, request_url, request_headers, time_stamp):
+    def __init__(self, request_url, request_headers, time_stamp, sf_name):
         self.__m_target_url = request_url
         self.__m_heads = request_headers
         self.__m_proxy_pool = []
         self.__m_get_proxy_time_stamp = time_stamp
         self.__is_to_exit = False
+        self.__file_name = sf_name
 
     def __del__(self):
         self.__m_proxy_pool = []
@@ -82,11 +83,11 @@ class Collector(object):
         return
 
     def save_proxy(self):
-        if os.path.isfile("ProxyPool.txt"):
-            os.remove("ProxyPool.txt")
+        if os.path.isfile(self.__file_name):
+            os.remove(self.__file_name)
         for item in self.__m_proxy_pool:
             need_to_save_proxy = "http://" + item + os.linesep
-            fp = open("ProxyPool.txt", "a")
+            fp = open(self.__file_name, "a")
             fp.write(need_to_save_proxy)
             fp.close()
 

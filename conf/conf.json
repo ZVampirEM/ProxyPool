@@ -25,7 +25,9 @@
     "1638": "163820"
   },
 
-  "listen_addr": "139.196.254.213",
+  "listen_addr": "127.0.0.1",
 
-  "listen_port": "7777"
+  "listen_port": "7777",
+
+  "savefile_name": "./ProxyPool.txt"
 }

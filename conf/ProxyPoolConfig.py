@@ -9,6 +9,7 @@ class ConfigOperating(object):
         self.__m_time_stamp = {}
         self.__m_listen_addr = ""
         self.__m_listen_port = ""
+        self.__m_savefile_name = ""
 
     def parse_conf_json(self):
         conf_json_obj = json.load(file(CONFIG_FILE))
@@ -17,6 +18,7 @@ class ConfigOperating(object):
         self.__m_time_stamp = conf_json_obj["time_stamp"]
         self.__m_listen_addr = conf_json_obj["listen_addr"]
         self.__m_listen_port = conf_json_obj["listen_port"]
+        self.__m_savefile_name = conf_json_obj["savefile_name"]
 
 
     def get_headers(self):
@@ -33,3 +35,6 @@ class ConfigOperating(object):
 
     def get_listen_port(self):
         return self.__m_listen_port
+
+    def get_savefile_name(self):
+        return self.__m_savefile_name

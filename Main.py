@@ -9,6 +9,7 @@ Created on Jul 14, 2016
 
 from conf import ProxyPoolConfig
 from ProxyPoolCollector import ProxyPoolCollectorThread
+from RequestProxyListener import RequestProxyListenerThread
 
 def main():
     #get headers, url, time_stamp from the module of conf
@@ -19,11 +20,15 @@ def main():
     get_proxy_time_stamp = config_instance.get_time_stamp()
     listen_addr = config_instance.get_listen_addr()
     listen_port = config_instance.get_listen_port()
+    save_file = config_instance.get_savefile_name()
 
     #proxy pool collector thread
     proxy_pool_collector_thread = ProxyPoolCollectorThread.ProxyCollectorThread(request_url,
-                                                    request_headers, get_proxy_time_stamp)
+                                                    request_headers, get_proxy_time_stamp, save_file)
     proxy_pool_collector_thread.launch()
+
+    request_listen_thread = RequestProxyListenerThread.RequestListenerThread(listen_addr, listen_port, save_file)
+    request_listen_thread.launch()
 
     while True:
         terminal_input = raw_input()

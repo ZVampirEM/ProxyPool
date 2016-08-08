@@ -13,6 +13,9 @@ class OriginalThread(object):
     def ExitInstance(self):
         pass
 
+    def Stop(self):
+        pass
+
     def thread_operating(self):
         if self.Initialize():
             self.Run()
