@@ -42,4 +42,8 @@ class Listener(object):
         print "A New Thread to Handle the request for client in address = %s:%s"\
               % (client_addr)
 
-        print socket_obj.recv(1024)
+        is_finished = False
+        while is_finished == False:
+            recv_request = socket_obj.recv(256)
+            pass
+
