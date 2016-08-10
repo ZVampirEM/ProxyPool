@@ -44,6 +44,16 @@ class Listener(object):
 
         is_finished = False
         while is_finished == False:
-            recv_request = socket_obj.recv(256)
-            pass
+            try:
+                recv_request = socket_obj.recv(256)
+                print recv_request
+            
+                if recv_request == 'exit':
+                    is_finished = True
+                    
+            except:
+                print "client close"
+                break
+            
+        socket_obj.close()
 
