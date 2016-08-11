@@ -1,5 +1,6 @@
 import socket
 import threading
+import time
 
 class Listener(object):
     def __init__(self, listen_addr, listen_port, sf_name):
@@ -44,16 +45,13 @@ class Listener(object):
 
         is_finished = False
         while is_finished == False:
-            try:
-                recv_request = socket_obj.recv(256)
-                print recv_request
-            
-                if recv_request == 'exit':
-                    is_finished = True
-                    
-            except:
-                print "client close"
-                break
+            recv_request = socket_obj.recv(256)
+            print recv_request
+            if recv_request == 'exit':
+                is_finished = True
+
             
         socket_obj.close()
 
+
+#结束时关闭的是监听socket -- > self.socket_server和工作socket

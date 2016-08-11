@@ -16,4 +16,5 @@ class RequestListenerThread(ThreadBaseModule.OriginalThread):
         del self.request_listener
 
     def Stop(self):
+        # close the listener socket and worker socket
         pass
