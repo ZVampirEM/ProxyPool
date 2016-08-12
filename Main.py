@@ -10,6 +10,9 @@ Created on Jul 14, 2016
 from conf import ProxyPoolConfig
 from ProxyPoolCollector import ProxyPoolCollectorThread
 from RequestProxyListener import RequestProxyListenerThread
+import threading
+
+thread_lock = threading.Lock()
 
 def main():
     #get headers, url, time_stamp from the module of conf
