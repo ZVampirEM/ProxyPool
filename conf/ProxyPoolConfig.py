@@ -20,21 +20,25 @@ class ConfigOperating(object):
         self.__m_listen_port = conf_json_obj["listen_port"]
         self.__m_savefile_name = conf_json_obj["savefile_name"]
 
-
+    @property
     def get_headers(self):
         return self.__m_headers
 
+    @property
     def get_url(self):
         return self.__m_url
 
+    @property
     def get_time_stamp(self):
         return self.__m_time_stamp
 
+    @property
     def get_listen_addr(self):
         return self.__m_listen_addr
 
+    @property
     def get_listen_port(self):
         return self.__m_listen_port
-
+    @property
     def get_savefile_name(self):
         return self.__m_savefile_name

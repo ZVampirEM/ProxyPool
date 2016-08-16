@@ -7,7 +7,7 @@ class Listener(object):
     def __init__(self, listen_addr, listen_port, sf_name):
         self.__m_listen_addr = listen_addr
         self.__m_listen_port = listen_port
-        self.socket_server = self.create_socket_server()
+        self.socket_server = None
         self.__m_send_proxy_list = []
         self.__proxy_save_file = sf_name
         self.request_num_pattern = re.compile(r'R_(\d+)')
@@ -17,15 +17,15 @@ class Listener(object):
 
 
     def create_socket_server(self):
-        my_socket_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # SET ADDRESS REUSE
-        my_socket_server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.socket_server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         # BIND
-        my_socket_server.bind((self.__m_listen_addr, int(self.__m_listen_port)))
+        self.socket_server.bind((self.__m_listen_addr, int(self.__m_listen_port)))
         # LISTEN
-        my_socket_server.listen(5)
+        self.socket_server.listen(5)
 
-        return my_socket_server
+#        return my_socket_server
 
     #listen the request
     def listening_request(self):
@@ -56,6 +56,9 @@ class Listener(object):
 
             elif recv_request == 'exit' or not recv_request:
                 is_finished = True
+
+            else:
+                continue
 
         socket_obj.close()
         print "close the connect"

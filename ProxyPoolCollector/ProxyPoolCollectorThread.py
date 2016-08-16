@@ -3,8 +3,8 @@ import ProxyCollector
 
 class ProxyCollectorThread(ThreadBaseModule.OriginalThread):
     def __init__(self, url, headers, time_stamp, savefile_name):
-        ThreadBaseModule.OriginalThread.__init__(self)
         self.proxy_pool_collect_instance = ProxyCollector.Collector(url, headers, time_stamp, savefile_name)
+        ThreadBaseModule.OriginalThread.__init__(self)
 
     def Initialize(self):
         return True
