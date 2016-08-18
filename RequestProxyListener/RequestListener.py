@@ -2,6 +2,7 @@ import socket
 import threading
 import time
 import re
+from Lock import ThreadLock
 
 class Listener(object):
     def __init__(self, listen_addr, listen_port, sf_name):
@@ -53,6 +54,7 @@ class Listener(object):
             if match_obj:
                 request_proxy_num = int(match_obj.group(1))
                 self.__m_send_proxy_list = self.GetProxy(request_proxy_num)
+                print self.__m_send_proxy_list
 
             elif recv_request == 'exit' or not recv_request:
                 is_finished = True
@@ -64,7 +66,14 @@ class Listener(object):
         print "close the connect"
 
     def GetProxy(self, request_num):
-        global thread_lock
+        proxy_list = []
+        ThreadLock.Lock()
+        proxy_pool_fp = open(self.__proxy_save_file, 'r')
+        while len(proxy_list) != request_num:
+            proxy_list.append(proxy_pool_fp.readline())
+        ThreadLock.UnLock()
+        return proxy_list
+
 
 
 #close listener socket -- > self.socket_server and working socket
