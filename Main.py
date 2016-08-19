@@ -24,13 +24,15 @@ def main():
     listen_addr = config_instance.get_listen_addr
     listen_port = config_instance.get_listen_port
     save_file = config_instance.get_savefile_name
+    filter_url = config_instance.get_filter_url
 
     #proxy pool collector thread
     proxy_pool_collector_thread = ProxyPoolCollectorThread.ProxyCollectorThread(request_url,
                                                     request_headers, get_proxy_time_stamp, save_file)
     proxy_pool_collector_thread.launch()
 
-    request_listen_thread = RequestProxyListenerThread.RequestListenerThread(listen_addr, listen_port, save_file)
+    request_listen_thread = RequestProxyListenerThread.RequestListenerThread(listen_addr, listen_port, save_file,
+                                                                             filter_url, request_headers)
     request_listen_thread.launch()
 
     while True:

@@ -10,6 +10,7 @@ class ConfigOperating(object):
         self.__m_listen_addr = ""
         self.__m_listen_port = ""
         self.__m_savefile_name = ""
+        self.__m_filter_url = ""
 
     def parse_conf_json(self):
         conf_json_obj = json.load(file(CONFIG_FILE))
@@ -19,6 +20,7 @@ class ConfigOperating(object):
         self.__m_listen_addr = conf_json_obj["listen_addr"]
         self.__m_listen_port = conf_json_obj["listen_port"]
         self.__m_savefile_name = conf_json_obj["savefile_name"]
+        self.__m_filter_url = conf_json_obj["filter_url"]
 
     @property
     def get_headers(self):
@@ -42,3 +44,7 @@ class ConfigOperating(object):
     @property
     def get_savefile_name(self):
         return self.__m_savefile_name
+    
+    @property
+    def get_filter_url(self):
+        return self.__m_filter_url

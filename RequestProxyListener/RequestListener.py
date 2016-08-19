@@ -3,14 +3,17 @@ import threading
 import time
 import re
 from Lock import ThreadLock
+import requests
 
 class Listener(object):
-    def __init__(self, listen_addr, listen_port, sf_name):
+    def __init__(self, listen_addr, listen_port, sf_name, flt_url, req_headers):
         self.__m_listen_addr = listen_addr
         self.__m_listen_port = listen_port
         self.socket_server = None
         self.__m_send_proxy_list = []
         self.__proxy_save_file = sf_name
+        self.__m_filter_url = flt_url
+        self.__m_headers = req_headers
         self.request_num_pattern = re.compile(r'R_(\d+)')
 
     def __del__(self):
@@ -64,13 +67,36 @@ class Listener(object):
 
         socket_obj.close()
         print "close the connect"
+    
+    def FilterProxy(self, proxy):
+        proxy_under_test = dict(http = proxy[:-2])
+        print proxy_under_test
+        try:
+            rtn_obj = requests.get(self.__m_filter_url, headers = self.__m_headers, proxies = proxy_under_test)
+            print rtn_obj.status_code
+        except:
+#            print rtn_obj.status
+            print "proxy {0} can't work".format(proxy[:-2])
+            return False
+        else:
+#            print rtn_obj.status
+            print "proxy {0} work!".format(proxy[:-2])
+            return True
+            
 
     def GetProxy(self, request_num):
         proxy_list = []
         ThreadLock.Lock()
         proxy_pool_fp = open(self.__proxy_save_file, 'r')
+#        print len(proxy_pool_fp.readlines())
         while len(proxy_list) != request_num:
-            proxy_list.append(proxy_pool_fp.readline())
+            proxy_ele = proxy_pool_fp.readline()
+            print proxy_ele
+            filter_result = self.FilterProxy(proxy_ele)
+            if filter_result == True:
+                proxy_list.append(proxy_ele)
+            else:
+                continue
         ThreadLock.UnLock()
         return proxy_list
 
