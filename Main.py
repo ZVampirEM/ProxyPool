@@ -24,6 +24,7 @@ def main():
     listen_addr = config_instance.get_listen_addr
     listen_port = config_instance.get_listen_port
     save_file = config_instance.get_savefile_name
+    filter_headers = config_instance.get_filter_headers
     filter_url = config_instance.get_filter_url
 
     #proxy pool collector thread
@@ -32,7 +33,7 @@ def main():
     proxy_pool_collector_thread.launch()
 
     request_listen_thread = RequestProxyListenerThread.RequestListenerThread(listen_addr, listen_port, save_file,
-                                                                             filter_url, request_headers)
+                                                                             filter_url, filter_headers)
     request_listen_thread.launch()
 
     while True:

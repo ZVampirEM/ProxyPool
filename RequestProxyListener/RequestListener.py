@@ -6,14 +6,15 @@ from Lock import ThreadLock
 import requests
 
 class Listener(object):
-    def __init__(self, listen_addr, listen_port, sf_name, flt_url, req_headers):
+    def __init__(self, listen_addr, listen_port, sf_name, flt_url, filter_headers):
         self.__m_listen_addr = listen_addr
         self.__m_listen_port = listen_port
         self.socket_server = None
         self.__m_send_proxy_list = []
         self.__proxy_save_file = sf_name
         self.__m_filter_url = flt_url
-        self.__m_headers = req_headers
+        self.__m_headers = filter_headers
+        self.__m_filter_session = requests.session()
         self.request_num_pattern = re.compile(r'R_(\d+)')
 
     def __del__(self):
@@ -72,8 +73,9 @@ class Listener(object):
         proxy_under_test = dict(http = proxy[:-2])
         print proxy_under_test
         try:
-            rtn_obj = requests.get(self.__m_filter_url, headers = self.__m_headers, proxies = proxy_under_test)
+            rtn_obj = self.__m_filter_session.get(self.__m_filter_url, headers = self.__m_headers, proxies = proxy_under_test, timeout = 5)
             print rtn_obj.status_code
+            print rtn_obj.ok
         except:
 #            print rtn_obj.status
             print "proxy {0} can't work".format(proxy[:-2])

@@ -2,8 +2,8 @@ from ThreadBase import ThreadBaseModule
 import RequestListener
 
 class RequestListenerThread(ThreadBaseModule.OriginalThread):
-    def __init__(self, addr, port, savefile_name, filter_url, req_headers):
-        self.request_listener = RequestListener.Listener(addr, port, savefile_name, filter_url, req_headers)
+    def __init__(self, addr, port, savefile_name, filter_url, filter_headers):
+        self.request_listener = RequestListener.Listener(addr, port, savefile_name, filter_url, filter_headers)
         ThreadBaseModule.OriginalThread.__init__(self)
 
     def Initialize(self):
