@@ -70,20 +70,22 @@ class Listener(object):
         print "close the connect"
     
     def FilterProxy(self, proxy):
-        proxy_under_test = dict(http = proxy[:-2])
+        proxy_under_test = dict(http = proxy[:-1])
         print proxy_under_test
         try:
             rtn_obj = self.__m_filter_session.get(self.__m_filter_url, headers = self.__m_headers, proxies = proxy_under_test, timeout = 5)
             print rtn_obj.status_code
             print rtn_obj.ok
+            if rtn_obj.ok:
+                print "proxy {0} work!".format(proxy[:-1])
+                return True
+            else:
+                print "proxy {0} can't work".format(proxy[:-1])
+                return False
         except:
 #            print rtn_obj.status
-            print "proxy {0} can't work".format(proxy[:-2])
+            print "proxy {0} can't work".format(proxy[:-1])
             return False
-        else:
-#            print rtn_obj.status
-            print "proxy {0} work!".format(proxy[:-2])
-            return True
             
 
     def GetProxy(self, request_num):
