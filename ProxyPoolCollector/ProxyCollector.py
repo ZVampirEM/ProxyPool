@@ -9,18 +9,19 @@ import requests
 import re
 import os
 import time
-from bs4 import BeautifulSoup
 import datetime
+from bs4 import BeautifulSoup
 from Lock import ThreadLock
+from conf import ProxyPoolConfig
 
 class Collector(object):
-    def __init__(self, request_url, request_headers, time_stamp, sf_name):
-        self.__m_target_url = request_url
-        self.__m_heads = request_headers
+    def __init__(self):
+        self.__m_target_url = ProxyPoolConfig.config_instance.get_url
+        self.__m_heads = ProxyPoolConfig.config_instance.get_headers
         self.__m_proxy_pool = []
-        self.__m_get_proxy_time_stamp = time_stamp
+        self.__m_get_proxy_time_stamp = ProxyPoolConfig.config_instance.get_time_stamp
         self.__is_to_exit = False
-        self.__file_name = sf_name
+        self.__file_name = ProxyPoolConfig.config_instance.get_savefile_name
 
     def __del__(self):
         self.__m_proxy_pool = []
@@ -86,7 +87,7 @@ class Collector(object):
     def save_proxy(self):
         # txt file is shared by collect thread and listen thread
         # so it should lock for the thread safe of data
-        ThreadLock.Lock()
+        ThreadLock.SaveFileLock()
         if os.path.isfile(self.__file_name):
             os.remove(self.__file_name)
         for item in self.__m_proxy_pool:
@@ -94,7 +95,7 @@ class Collector(object):
             fp = open(self.__file_name, "a")
             fp.write(need_to_save_proxy)
             fp.close()
-        ThreadLock.UnLock()
+        ThreadLock.SaveFileUnLock()
 
         print "Save Proxy Pool Success!"
         self.__m_proxy_pool = []

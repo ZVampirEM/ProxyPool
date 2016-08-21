@@ -1,20 +1,17 @@
 import socket
 import threading
-import time
 import re
 from Lock import ThreadLock
-import requests
+from conf import ProxyPoolConfig
+
 
 class Listener(object):
-    def __init__(self, listen_addr, listen_port, sf_name, flt_url, filter_headers):
-        self.__m_listen_addr = listen_addr
-        self.__m_listen_port = listen_port
+    def __init__(self):
+        self.__m_listen_addr = ProxyPoolConfig.config_instance.get_listen_addr
+        self.__m_listen_port = ProxyPoolConfig.config_instance.get_listen_port
         self.socket_server = None
         self.__m_send_proxy_list = []
-        self.__proxy_save_file = sf_name
-        self.__m_filter_url = flt_url
-        self.__m_headers = filter_headers
-        self.__m_filter_session = requests.session()
+        self.__proxy_vari_file = ProxyPoolConfig.config_instance.get_varifile_name
         self.request_num_pattern = re.compile(r'R_(\d+)')
 
     def __del__(self):
@@ -58,7 +55,8 @@ class Listener(object):
             if match_obj:
                 request_proxy_num = int(match_obj.group(1))
                 self.__m_send_proxy_list = self.GetProxy(request_proxy_num)
-                print self.__m_send_proxy_list
+                socket_obj.send(",".join(self.__m_send_proxy_list))
+
 
             elif recv_request == 'exit' or not recv_request:
                 is_finished = True
@@ -90,18 +88,15 @@ class Listener(object):
 
     def GetProxy(self, request_num):
         proxy_list = []
-        ThreadLock.Lock()
-        proxy_pool_fp = open(self.__proxy_save_file, 'r')
+        ThreadLock.VariFileLock()
+        proxy_pool_fp = open(self.__proxy_vari_file, 'r')
+
+        if len(proxy_pool_fp.readlines()) < request_num:
+            request_num = len(proxy_pool_fp.readlines())
 #        print len(proxy_pool_fp.readlines())
         while len(proxy_list) != request_num:
-            proxy_ele = proxy_pool_fp.readline()
-            print proxy_ele
-            filter_result = self.FilterProxy(proxy_ele)
-            if filter_result == True:
-                proxy_list.append(proxy_ele)
-            else:
-                continue
-        ThreadLock.UnLock()
+            proxy_list.append(proxy_pool_fp.readline())
+        ThreadLock.VariFileUnLock()
         return proxy_list
 
 

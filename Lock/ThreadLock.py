@@ -1,9 +1,16 @@
 import threading
 
-_ThreadLock = threading.Lock()
+_SaveFile_ThreadLock = threading.Lock()
+_VariFile_ThreadLock = threading.Lock()
 
-def Lock():
-    _ThreadLock.acquire()
+def SaveFileLock():
+    _SaveFile_ThreadLock.acquire()
 
-def UnLock():
-    _ThreadLock.release()
+def SaveFileUnLock():
+    _SaveFile_ThreadLock.release()
+
+def VariFileLock():
+    _VariFile_ThreadLock.acquire()
+
+def VariFileUnLock():
+    _VariFile_ThreadLock.release()

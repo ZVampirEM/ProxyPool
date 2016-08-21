@@ -17,7 +17,11 @@
              "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
              },
   
-  "filter_url": "http://www.ip138.com/",
+  "filter_url_1": "http://www.ip138.com/",
+
+  "filter_url_2": "http://httpbin.org/ip",
+
+  "filter_url_3": "http://icanhazip.com/",
 
   "time_stamp": {
     "2359": "235953",
@@ -49,5 +53,7 @@
 
   "listen_port": "7777",
 
-  "savefile_name": "./ProxyPool.txt"
+  "savefile_name": "./ProxyPool.txt",
+
+  "varifile_name": "./VariableProxy.txt"
 }
