@@ -89,13 +89,15 @@ class Listener(object):
     def GetProxy(self, request_num):
         proxy_list = []
         ThreadLock.VariFileLock()
-        proxy_pool_fp = open(self.__proxy_vari_file, 'r')
-
-        if len(proxy_pool_fp.readlines()) < request_num:
-            request_num = len(proxy_pool_fp.readlines())
-#        print len(proxy_pool_fp.readlines())
-        while len(proxy_list) != request_num:
-            proxy_list.append(proxy_pool_fp.readline())
+        try:
+            proxy_pool_fp = open(self.__proxy_vari_file, 'r')
+        except:
+            proxy_list.append("There Is Not Any Variable Proxy!")
+        else:
+            if len(proxy_pool_fp.readlines()) < request_num:
+                request_num = len(proxy_pool_fp.readlines())
+            while len(proxy_list) != request_num:
+                proxy_list.append(proxy_pool_fp.readline())
         ThreadLock.VariFileUnLock()
         return proxy_list
 
