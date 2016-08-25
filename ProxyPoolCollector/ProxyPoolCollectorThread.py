@@ -19,4 +19,5 @@ class ProxyCollectorThread(ThreadBaseModule.OriginalThread):
         self.proxy_pool_collect_instance.set_is_to_exit_flag(True)
         self.thread_instance.join()
 
-
+    def IsOk(self):
+        return self.proxy_pool_collect_instance.get_can_handle_flag()

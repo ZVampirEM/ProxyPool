@@ -18,7 +18,7 @@ class FilterThread(ThreadBaseModule.OriginalThread):
         return True
     
     def Run(self):
-        pass
+        self.m_filter_instance.filter_variable_proxy()
     
     def ExitInstance(self):
-        pass
+        return True

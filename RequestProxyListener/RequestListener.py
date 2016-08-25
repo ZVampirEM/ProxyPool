@@ -11,7 +11,7 @@ class Listener(object):
         self.__m_listen_port = ProxyPoolConfig.config_instance.get_listen_port
         self.socket_server = None
         self.__m_send_proxy_list = []
-        self.__proxy_vari_file = ProxyPoolConfig.config_instance.get_varifile_name
+        # self.__proxy_vari_file = ProxyPoolConfig.config_instance.get_varifile_name
         self.request_num_pattern = re.compile(r'R_(\d+)')
 
     def __del__(self):
@@ -66,24 +66,6 @@ class Listener(object):
 
         socket_obj.close()
         print "close the connect"
-    
-    def FilterProxy(self, proxy):
-        proxy_under_test = dict(http = proxy[:-1])
-        print proxy_under_test
-        try:
-            rtn_obj = self.__m_filter_session.get(self.__m_filter_url, headers = self.__m_headers, proxies = proxy_under_test, timeout = 5)
-            print rtn_obj.status_code
-            print rtn_obj.ok
-            if rtn_obj.ok:
-                print "proxy {0} work!".format(proxy[:-1])
-                return True
-            else:
-                print "proxy {0} can't work".format(proxy[:-1])
-                return False
-        except:
-#            print rtn_obj.status
-            print "proxy {0} can't work".format(proxy[:-1])
-            return False
             
 
     def GetProxy(self, request_num):

@@ -53,7 +53,5 @@
 
   "listen_port": "7777",
 
-  "savefile_name": "./ProxyPool.txt",
-
-  "varifile_name": "./VariableProxy.txt"
+  "savefile_name": "./ProxyPool.txt"
 }

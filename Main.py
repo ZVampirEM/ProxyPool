@@ -9,6 +9,7 @@ Created on Jul 14, 2016
 
 from ProxyPoolCollector import ProxyPoolCollectorThread
 from RequestProxyListener import RequestProxyListenerThread
+from ForProxyValidator import ProxyFilterThread
 import threading
 
 thread_lock = threading.Lock()
@@ -20,6 +21,12 @@ def main():
 
     request_listen_thread = RequestProxyListenerThread.RequestListenerThread()
     request_listen_thread.launch()
+
+    while True:
+        if proxy_pool_collector_thread.IsOk():
+            filter_proxy_thread = ProxyFilterThread.FilterThread()
+            filter_proxy_thread.launch()
+            break
 
     while True:
         terminal_input = raw_input()
