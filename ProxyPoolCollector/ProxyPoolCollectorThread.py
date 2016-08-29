@@ -2,8 +2,8 @@ from ThreadBase import ThreadBaseModule
 import ProxyCollector
 
 class ProxyCollectorThread(ThreadBaseModule.OriginalThread):
-    def __init__(self):
-        self.proxy_pool_collect_instance = ProxyCollector.Collector()
+    def __init__(self, event):
+        self.proxy_pool_collect_instance = ProxyCollector.Collector(event)
         ThreadBaseModule.OriginalThread.__init__(self)
 
     def Initialize(self):
@@ -18,6 +18,3 @@ class ProxyCollectorThread(ThreadBaseModule.OriginalThread):
     def Stop(self):
         self.proxy_pool_collect_instance.set_is_to_exit_flag(True)
         self.thread_instance.join()
-
-    def IsOk(self):
-        return self.proxy_pool_collect_instance.get_can_handle_flag()

@@ -15,14 +15,14 @@ from Lock import ThreadLock
 from conf import ProxyPoolConfig
 
 class Collector(object):
-    def __init__(self):
+    def __init__(self, is_ok_event):
         self.__m_target_url = ProxyPoolConfig.config_instance.get_url
         self.__m_heads = ProxyPoolConfig.config_instance.get_headers
         self.__m_proxy_pool = []
         self.__m_get_proxy_time_stamp = ProxyPoolConfig.config_instance.get_time_stamp
         self.__is_to_exit = False
         self.__file_name = ProxyPoolConfig.config_instance.get_savefile_name
-        self.__m_can_handle_flag = False
+        self.__m_event = is_ok_event
 
     def __del__(self):
         self.__m_proxy_pool = []
@@ -32,9 +32,6 @@ class Collector(object):
 
     def set_is_to_exit_flag(self, value):
         self.__is_to_exit = value
-
-    def get_can_handle_flag(self):
-        return self.__m_can_handle_flag
 
 
     #Parse the url xicidaili.com
@@ -107,7 +104,8 @@ class Collector(object):
     def get_proxy_pool(self):
         self.parse_xici_com()
         self.save_proxy()
-        self.__m_can_handle_flag = True
+        self.__m_event.set()
+        self.__m_event.clear()
 
         while 1:
             current_time = int(time.strftime("%H%M%S", time.localtime(time.time())))
