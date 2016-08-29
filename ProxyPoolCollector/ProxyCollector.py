@@ -88,15 +88,14 @@ class Collector(object):
     def save_proxy(self):
         # txt file is shared by collect thread and listen thread
         # so it should lock for the thread safe of data
-        ThreadLock.SaveFileLock()
-        if os.path.isfile(self.__file_name):
-            os.remove(self.__file_name)
-        for item in self.__m_proxy_pool:
-            need_to_save_proxy = "http://" + item + os.linesep
-            fp = open(self.__file_name, "a")
-            fp.write(need_to_save_proxy)
-            fp.close()
-        ThreadLock.SaveFileUnLock()
+        with ThreadLock.SaveFile_ThreadLock:
+            if os.path.isfile(self.__file_name):
+                os.remove(self.__file_name)
+            for item in self.__m_proxy_pool:
+                need_to_save_proxy = "http://" + item + os.linesep
+                with open(self.__file_name, "a") as fp:
+                    fp.write(need_to_save_proxy)
+#                fp.close()
 
         print "Save Proxy Pool Success!"
         self.__m_proxy_pool = []

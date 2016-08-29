@@ -1,6 +1,7 @@
 import socket
 import threading
 import re
+import time
 from Lock import ThreadLock
 from conf import ProxyPoolConfig
 
@@ -11,7 +12,7 @@ class Listener(object):
         self.__m_listen_port = ProxyPoolConfig.config_instance.get_listen_port
         self.socket_server = None
         self.__m_send_proxy_list = []
-        # self.__proxy_vari_file = ProxyPoolConfig.config_instance.get_varifile_name
+        self.__proxy_vari_file = ''
         self.request_num_pattern = re.compile(r'R_(\d+)')
 
     def __del__(self):
@@ -70,17 +71,23 @@ class Listener(object):
 
     def GetProxy(self, request_num):
         proxy_list = []
-        ThreadLock.VariFileLock()
-        try:
-            proxy_pool_fp = open(self.__proxy_vari_file, 'r')
-        except:
-            proxy_list.append("There Is Not Any Variable Proxy!")
-        else:
-            if len(proxy_pool_fp.readlines()) < request_num:
-                request_num = len(proxy_pool_fp.readlines())
-            while len(proxy_list) != request_num:
-                proxy_list.append(proxy_pool_fp.readline())
-        ThreadLock.VariFileUnLock()
+        today = str(int(time.strftime("%Y%m%d", time.localtime(time.time()))))
+        self.__proxy_vari_file = 'VariableProxy' + today + '.txt'
+        with ThreadLock.VariFile_ThreadLock:
+            try:
+                with open(self.__proxy_vari_file, 'r') as proxy_pool_fp:
+                    for item in proxy_pool_fp.readlines():
+                        print item
+                    if len(proxy_pool_fp.readlines()) < request_num:
+                        request_num = len(proxy_pool_fp.readlines())
+                    while len(proxy_list) != request_num:
+                        proxy = proxy_pool_fp.readline()[:-1]
+                        proxy_list.append(proxy)
+                        
+            except:
+                print "There is not any variable proxy!"
+                proxy_list.append("There Is Not Any Variable Proxy!")
+                
         return proxy_list
 
 
