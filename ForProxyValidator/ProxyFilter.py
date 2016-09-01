@@ -9,9 +9,11 @@ Created on Aug 23, 2016
 import time
 import os
 import re
+import threading
 import requests
 from conf import ProxyPoolConfig
 from Lock import ThreadLock
+from Logger import PublicLogger
 
 class Filter(object):
     def __init__(self):
@@ -21,6 +23,15 @@ class Filter(object):
         self.__m_filter_url_3 = ProxyPoolConfig.config_instance.get_filter_url_3
         self.__m_filter_session = requests.session()
         self.__m_filter_url_dict = {0: self.__m_filter_url_1, 1: self.__m_filter_url_2, 2: self.__m_filter_url_3}
+        self.__m_is_to_exit = False
+        self.m_is_wait = False
+        self.m_thread_event = threading.Event()
+        self.exit_flag_threadlock = threading.Lock()
+
+    def set_is_to_exit(self):
+        self.exit_flag_threadlock.acquire()
+        self.__m_is_to_exit = True
+        self.exit_flag_threadlock.release()
 
     def find_write_file(self):
         is_today_file_exist_flag = False
@@ -42,22 +53,23 @@ class Filter(object):
         return today_file_name
 
     def IsVariable(self, proxy, serial_no):
-        proxy_under_test = dict(http = proxy[:-2])
+        proxy_under_test = dict(http = proxy[:-1])
         filter_url = self.__m_filter_url_dict[serial_no % 3]
-        print proxy_under_test
-        print filter_url
-        
+        PublicLogger.logger.debug('proxy: {0} start to be filter'.format(proxy[:-1]))
         try:
             rtn_obj = self.__m_filter_session.get(filter_url, headers = self.__m_filter_headers, proxies = proxy_under_test, timeout = 5)
 #            print rtn_obj.status_code
 #            print rtn_obj.ok
             if rtn_obj.ok:
 #                print "proxy {0} work!".format(proxy[:-1])
+                PublicLogger.logger.debug('proxy: {0} is variable proxy'.format(proxy[:-1]))
                 return True
             else:
+                PublicLogger.logger.error('proxy: {0} is avariable proxy'.format(proxy[:-1]))
 #                print "proxy {0} can't work".format(proxy[:-1])
                 return False
         except:
+            PublicLogger.logger.error('proxy: {0} is avariable proxy'.format(proxy[:-1]))
 #            print "proxy {0} can't work".format(proxy[:-1])
             return False
 
@@ -73,7 +85,8 @@ class Filter(object):
                 with open(variable_proxy_file, 'r') as var_proxy_fp:
                     all_variable_proxy_list = var_proxy_fp.readlines()
             except:
-                print "Open {0} Fail!".format(variable_proxy_file)
+                PublicLogger.logger.error("Open {0} Fail!".format(variable_proxy_file))
+                return
         
         with ThreadLock.SaveFile_ThreadLock:
             try:
@@ -83,14 +96,18 @@ class Filter(object):
 #                    print all_proxy_list
 #                    print len(all_proxy_list)
             except:
-                print "{0} haven't been created!".format(proxy_source_file)
-        
-        #=======================================================================
-        # for item in all_variable_proxy_list:
-        #     print "variable proxy " + item
-        #=======================================================================
+                PublicLogger.logger.error("{0} haven't been created!".format(proxy_source_file))
+                return
+
         # varify the proxy in proxy list variable or not
+
         for proxy_item in all_proxy_list:
+            self.exit_flag_threadlock.acquire()
+            if self.__m_is_to_exit:
+                self.exit_flag_threadlock.release()
+                break
+            self.exit_flag_threadlock.release()
+
             proxy_serial_num += 1
             if self.IsVariable(proxy_item, proxy_serial_num):
                 if proxy_item in all_variable_proxy_list:
@@ -99,9 +116,20 @@ class Filter(object):
                     with ThreadLock.VariFile_ThreadLock:
                         try:
                             with open(variable_proxy_file, 'a') as var_proxy_fp:
-                                var_proxy_fp.write(proxy_item[:-1])
+                                var_proxy_fp.write(proxy_item)
                         except:
-                            print "Close Variable Proxy File Fail!"
+                            PublicLogger.logger.error("Close Variable Proxy File Fail!")
             else:
-                print "Proxy {0} is Avariable!".format(proxy_item[:-2])
                 continue
+
+
+    def filter_run(self):
+        while not self.__m_is_to_exit:
+            self.filter_variable_proxy()
+            self.exit_flag_threadlock.acquire()
+            if not self.__m_is_to_exit:
+                self.exit_flag_threadlock.release()
+                self.m_is_wait = True
+                self.m_thread_event.wait(timeout=3600)
+                self.m_is_wait = False
+            self.exit_flag_threadlock.release()

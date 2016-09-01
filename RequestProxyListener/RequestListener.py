@@ -14,9 +14,17 @@ class Listener(object):
         self.__m_send_proxy_list = []
         self.__proxy_vari_file = ''
         self.request_num_pattern = re.compile(r'R_(\d+)')
+        self.__m_is_to_exit = False
+        self.m_handle_thread_list = []
+        self.m_exit_flag_threadlock = threading.Lock()
 
     def __del__(self):
         self.socket_server.close()
+
+    def set_is_to_exit(self):
+        self.m_exit_flag_threadlock.acquire()
+        self.__m_is_to_exit = True
+        self.m_exit_flag_threadlock.release()
 
 
     def create_socket_server(self):
@@ -30,19 +38,30 @@ class Listener(object):
 
 #        return my_socket_server
 
+    def Join(self):
+        while len(self.m_handle_thread_list) != 0:
+            time.sleep(1)
+
+
     #listen the request
     def listening_request(self):
-        while True:
+        thread_index = 0
+        while not self.__m_is_to_exit:
             sock, addr = self.socket_server.accept()
 
             print "A New Connect, address = %s:%s" % (addr)
 
             #create handle thread
-            handle_thread = threading.Thread(target=self.handle_client_request, args=(sock, addr))
+            handle_thread = threading.Thread(target=self.handle_client_request, args=(sock, addr, thread_index))
             handle_thread.start()
+            self.m_handle_thread_list.append(handle_thread)
+            thread_index += 1
+
+        print "need to stop"
+        self.Join()
 
 
-    def handle_client_request(self, socket_obj, client_addr):
+    def handle_client_request(self, socket_obj, client_addr, thread_index):
         print "A New Thread to Handle the request for client in address = %s:%s"\
               % (client_addr)
 
@@ -57,8 +76,6 @@ class Listener(object):
                 request_proxy_num = int(match_obj.group(1))
                 self.__m_send_proxy_list = self.GetProxy(request_proxy_num)
                 socket_obj.send(",".join(self.__m_send_proxy_list))
-
-
             elif recv_request == 'exit' or not recv_request:
                 is_finished = True
 
@@ -67,6 +84,7 @@ class Listener(object):
 
         socket_obj.close()
         print "close the connect"
+        self.m_handle_thread_list.pop(thread_index)
             
 
     def GetProxy(self, request_num):
@@ -76,13 +94,11 @@ class Listener(object):
         with ThreadLock.VariFile_ThreadLock:
             try:
                 with open(self.__proxy_vari_file, 'r') as proxy_pool_fp:
-                    for item in proxy_pool_fp.readlines():
-                        print item
-                    if len(proxy_pool_fp.readlines()) < request_num:
-                        request_num = len(proxy_pool_fp.readlines())
+                    variable_proxy_list = proxy_pool_fp.readlines()
+                    if len(variable_proxy_list) < request_num:
+                        request_num = len(variable_proxy_list)
                     while len(proxy_list) != request_num:
-                        proxy = proxy_pool_fp.readline()[:-1]
-                        proxy_list.append(proxy)
+                        proxy_list.append(variable_proxy_list.pop(0))
                         
             except:
                 print "There is not any variable proxy!"

@@ -18,7 +18,16 @@ class FilterThread(ThreadBaseModule.OriginalThread):
         return True
     
     def Run(self):
-        self.m_filter_instance.filter_variable_proxy()
+        self.m_filter_instance.filter_run()
     
     def ExitInstance(self):
-        return True
+        del self.m_filter_instance
+
+    def Stop(self):
+        self.m_filter_instance.set_is_to_exit()
+        print self.m_filter_instance.m_is_wait
+        if self.m_filter_instance.m_is_wait:
+            self.m_filter_instance.m_thread_event.set()
+            self.m_filter_instance.m_thread_event.clear()
+        self.thread_instance.join()
+        print "Filter Thread Stop Success!"

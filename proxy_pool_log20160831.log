@@ -1,0 +1,19 @@
+2016-08-31 00:55:32 - DEBUG - proxy: http://180.103.131.65:808 start to be filter
+2016-08-31 00:55:37 - DEBUG - proxy: http://180.103.131.65:808 is variable proxy
+2016-08-31 00:55:37 - DEBUG - proxy: http://115.173.148.162:8080 start to be filter
+2016-08-31 00:55:46 - ERROR - proxy: http://115.173.148.162:8080 is avariable proxy
+2016-08-31 00:55:46 - DEBUG - proxy: http://114.228.3.221:8998 start to be filter
+2016-08-31 00:55:51 - ERROR - proxy: http://114.228.3.221:8998 is avariable proxy
+2016-08-31 00:55:51 - DEBUG - proxy: http://183.139.131.22:8080 start to be filter
+2016-08-31 00:55:52 - DEBUG - proxy: http://183.139.131.22:8080 is variable proxy
+2016-08-31 00:55:52 - DEBUG - proxy: http://36.7.172.18:82 start to be filter
+2016-08-31 00:55:55 - DEBUG - proxy: http://36.7.172.18:82 is variable proxy
+2016-08-31 00:55:55 - DEBUG - proxy: http://60.212.196.88:8118 start to be filter
+2016-08-31 00:55:56 - ERROR - proxy: http://60.212.196.88:8118 is avariable proxy
+2016-08-31 00:55:56 - DEBUG - proxy: http://58.21.191.36:8118 start to be filter
+2016-08-31 00:56:01 - ERROR - proxy: http://58.21.191.36:8118 is avariable proxy
+2016-08-31 00:56:01 - DEBUG - proxy: http://121.40.108.76:80 start to be filter
+2016-08-31 00:56:05 - DEBUG - proxy: http://121.40.108.76:80 is variable proxy
+2016-08-31 00:56:05 - DEBUG - proxy: http://218.244.149.184:8888 start to be filter
+2016-08-31 00:56:12 - ERROR - proxy: http://218.244.149.184:8888 is avariable proxy
+2016-08-31 00:56:12 - DEBUG - proxy: http://123.57.190.51:7777 start to be filter

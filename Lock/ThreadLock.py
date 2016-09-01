@@ -3,6 +3,8 @@ import threading
 SaveFile_ThreadLock = threading.Lock()
 VariFile_ThreadLock = threading.Lock()
 
+
+
 def SaveFileLock():
     SaveFile_ThreadLock.acquire()
 

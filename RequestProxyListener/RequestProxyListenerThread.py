@@ -1,5 +1,6 @@
 from ThreadBase import ThreadBaseModule
 import RequestListener
+import socket
 
 class RequestListenerThread(ThreadBaseModule.OriginalThread):
     def __init__(self):
@@ -18,4 +19,12 @@ class RequestListenerThread(ThreadBaseModule.OriginalThread):
 
     def Stop(self):
         # close the listener socket and worker socket
-        pass
+        self.request_listener.set_is_to_exit()
+        close_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        close_socket.connect(('127.0.0.1', 7777))
+        close_socket.send('exit')
+
+        self.thread_instance.join()
+        print "Listener Thread Stop Success!"
+
+

@@ -18,3 +18,4 @@ class ProxyCollectorThread(ThreadBaseModule.OriginalThread):
     def Stop(self):
         self.proxy_pool_collect_instance.set_is_to_exit_flag(True)
         self.thread_instance.join()
+        print "Collector Thread Stop Success!"

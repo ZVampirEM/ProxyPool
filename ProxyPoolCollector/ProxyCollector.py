@@ -10,6 +10,7 @@ import re
 import os
 import time
 import datetime
+import threading
 from bs4 import BeautifulSoup
 from Lock import ThreadLock
 from conf import ProxyPoolConfig
@@ -23,6 +24,7 @@ class Collector(object):
         self.__is_to_exit = False
         self.__file_name = ProxyPoolConfig.config_instance.get_savefile_name
         self.__m_event = is_ok_event
+        self.m_exit_flag_threadlock = threading.Lock()
 
     def __del__(self):
         self.__m_proxy_pool = []
@@ -31,7 +33,9 @@ class Collector(object):
         return self.__is_to_exit
 
     def set_is_to_exit_flag(self, value):
+        self.m_exit_flag_threadlock.acquire()
         self.__is_to_exit = value
+        self.m_exit_flag_threadlock.release()
 
 
     #Parse the url xicidaili.com
@@ -115,8 +119,10 @@ class Collector(object):
                     self.parse_xici_com()
                     self.save_proxy()
 
+            self.m_exit_flag_threadlock.acquire()
             if self.__is_to_exit:
                 break
+            self.m_exit_flag_threadlock.release()
 
             time.sleep(10)
 
