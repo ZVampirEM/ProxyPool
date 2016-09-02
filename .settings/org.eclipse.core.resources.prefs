@@ -1,5 +1,6 @@
 eclipse.preferences.version=1
 encoding//ForProxyValidator/ProxyFilter.py=utf-8
 encoding//ForProxyValidator/ProxyFilterThread.py=utf-8
+encoding//ProxyPoolClient/iProxyPool.py=utf-8
 encoding//ProxyPoolCollector/ProxyCollector.py=utf-8
 encoding/Main.py=utf-8

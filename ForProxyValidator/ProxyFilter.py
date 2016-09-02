@@ -132,4 +132,5 @@ class Filter(object):
                 self.m_is_wait = True
                 self.m_thread_event.wait(timeout=3600)
                 self.m_is_wait = False
+                continue
             self.exit_flag_threadlock.release()
